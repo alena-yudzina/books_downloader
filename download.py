@@ -57,15 +57,20 @@ for i in range(1, 11):
     soup = BeautifulSoup(response.text, 'lxml')
     info_text = soup.find('h1').text
     filename = info_text.split('::')[0].strip()
-    img_url = soup.find(class_='bookimage').find('img')['src']
-    img_abs_url = urljoin(url, img_url)
     print('Заголовок:', filename)
+    genres_list = []
+    genres = soup.find('span', class_='d_book').find_all('a')
+    for genre in genres:
+        genres_list.append(genre.text)
+    print(genres_list)
+    # img_url = soup.find(class_='bookimage').find('img')['src']
+    # img_abs_url = urljoin(url, img_url)
     print()
 
-    comments = soup.find_all('div', class_='texts')
+    '''comments = soup.find_all('div', class_='texts')
     for comment in comments:
         comment_text = comment.find('span', class_='black').text
-        print(comment_text)
+        print(comment_text)'''
 
 
     '''info_text = soup.find('h1').text
