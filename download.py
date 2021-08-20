@@ -41,8 +41,11 @@ def check_for_redirect(response):
         raise requests.HTTPError
 
 
-def download_txt(response, filename, folder='books/'):
+def download_txt(url, payload, filename, folder='books/'):
 
+    response = requests.get(url, params=payload)
+    check_for_redirect(response)
+    response.raise_for_status()
     Path(folder).mkdir(parents=True, exist_ok=True)
     timestamp = datetime.datetime.now().strftime('%y%m%d_%H%M%S')
     filename = '{}_{}.txt'.format(timestamp, sanitize_filename(filename))
@@ -56,6 +59,8 @@ def download_txt(response, filename, folder='books/'):
 def download_image(url, folder='images'):
 
     response = requests.get(url)
+    response.raise_for_status()
+    check_for_redirect(response)
     Path(folder).mkdir(parents=True, exist_ok=True)
     url_path = urlsplit(url).path
     filename = unquote(Path(url_path).name)
@@ -85,23 +90,13 @@ def main():
         print()
 
         img_url = urljoin(url, book_info['img_url'])
-        response = requests.get(url)
+        book_url = 'https://tululu.org/txt.php'
+        payload = {'id': book_id}
         try:
-            check_for_redirect(response)
-            response.raise_for_status()
+            download_image(img_url)
+            download_txt(book_url, payload, filename=book_info['title'])
         except requests.HTTPError:
-            return
-        download_image(img_url)
-
-        url = 'https://tululu.org/txt.php'
-        payload = {'id': str(book_id)}
-        response = requests.get(url, params=payload)
-        try:
-            check_for_redirect(response)
-            response.raise_for_status()
-        except requests.HTTPError:
-            return
-        download_txt(response, filename=book_info['title'])
+            print('Unable to download book')
 
 
 if __name__ == '__main__':
