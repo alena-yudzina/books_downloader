@@ -1,6 +1,5 @@
 import argparse
 import datetime
-from os import name
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlparse, urlsplit
 

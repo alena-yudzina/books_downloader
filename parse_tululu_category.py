@@ -1,5 +1,6 @@
 import argparse
 import json
+from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
@@ -11,20 +12,50 @@ from download import (check_for_redirect, download_image, download_txt,
 
 def parse_cli_args():
     parser = argparse.ArgumentParser(description='Download fantasy books')
-    parser.add_argument('--start_page', help='set start page', type=int, default=1)
-    parser.add_argument('--end_page', help='set end page', type=int, default=701)
+    parser.add_argument(
+        '--start_page',
+        help='set start page',
+        type=int,
+        default=1
+    )
+    parser.add_argument(
+        '--end_page',
+        help='set end page',
+        type=int,
+        default=701
+    )
+    parser.add_argument(
+        '--dest_folder',
+        help='set folder to download',
+        type=str,
+        default='.'
+    )
+    parser.add_argument(
+        '--skip_imgs',
+        action='store_true',
+        help='Булевое значение True или False'
+    )
+    parser.add_argument(
+        '--skip_txt',
+        action='store_true',
+        help='Булевое значение True или False'
+    )
+    parser.add_argument(
+        '--json_path',
+        help='set path to json with info',
+        type=str,
+        default='.'
+    )
     args = parser.parse_args()
 
     return args
 
 
 def fantasy_urls(start, end):
-    print(start, end)
     fantasy_book_ids = []
     for page_id in range(start, end):
         url = 'https://tululu.org/l55/{}'.format(page_id)
         response = requests.get(url)
-        print(response.url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'lxml')
         book_hrefs = [tag['href'] for tag in soup.select('.d_book .bookimage a')]
@@ -51,17 +82,24 @@ def download_category():
         book_url = 'https://tululu.org/txt.php'
         payload = {'id': book_id}
         try:
-            book_info['book_path'] = str(download_txt(
-                book_url,
-                payload,
-                filename=book_info['title']
-            ))
-            download_image(img_url)
+            if not args.skip_txt:
+                book_info['book_path'] = str(download_txt(
+                    book_url,
+                    payload,
+                    filename=book_info['title'],
+                    folder=Path(args.dest_folder, 'books')
+                ))
+            if not args.skip_imgs:
+                download_image(
+                    img_url,
+                    folder=Path(args.dest_folder, 'images')
+                )
             books_info.append(book_info)
         except requests.HTTPError:
             print('Unable to download book')
-        
-    with open('fantasy_books_info.json', mode="a") as file:
+    
+    json_path =  args.json_path if args.json_path != '.' else args.dest_folder
+    with open(Path(json_path, 'fantasy_books_info.json'), mode="a") as file:
         json.dump(books_info, file, ensure_ascii=False, indent=4)
 
 
