@@ -11,8 +11,7 @@ def fantasy_urls():
         response = requests.get(url, params=payload)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'lxml')
-        book_cards = soup.find_all(class_='d_book')
-        book_hrefs = [card.find('a')['href'] for card in book_cards]
+        book_hrefs = [tag['href'] for tag in soup.select('.d_book .bookimage a')]
         book_ids = [book_href[2:] for book_href in book_hrefs]
         fantasy_book_ids.extend(book_ids)
     return fantasy_book_ids
