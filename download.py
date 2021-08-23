@@ -1,13 +1,12 @@
-from os import name
-import requests
-import json
-from pathlib import Path
-from bs4 import BeautifulSoup
-from pathvalidate import sanitize_filename
-from urllib.parse import urlparse, urlsplit, urljoin, unquote
-from parse_tululu_category import fantasy_urls
 import argparse
 import datetime
+from os import name
+from pathlib import Path
+from urllib.parse import unquote, urljoin, urlparse, urlsplit
+
+import requests
+from bs4 import BeautifulSoup
+from pathvalidate import sanitize_filename
 
 
 def parse_cli_args():
@@ -21,7 +20,7 @@ def parse_cli_args():
 
 def parse_book_page(page):
     soup = BeautifulSoup(page, 'lxml')
-    title_and_author = soup.find('h1').text
+    title_and_author = soup.select_one('h1').text
     title, author = title_and_author.split('::')
     genres = [tag.text for tag in soup.select('span.d_book a')]
     img_url = soup.select_one('.bookimage img')['src']
@@ -101,38 +100,5 @@ def main():
             print('Unable to download book')
 
 
-def download_category():
-    book_ids = fantasy_urls()
-    books_info = []
-    for book_id in book_ids:
-        url = 'https://tululu.org/b{}'.format(book_id)
-        response = requests.get(url)
-        try:
-            check_for_redirect(response)
-            response.raise_for_status()
-        except requests.HTTPError:
-            continue
-
-        book_info = parse_book_page(response.text)
-        img_url = urljoin(url, book_info['img_url'])
-        book_url = 'https://tululu.org/txt.php'
-        payload = {'id': book_id}
-        try:
-            book_info['book_path'] = str(download_txt(
-                book_url,
-                payload,
-                filename=book_info['title']
-            ))
-            download_image(img_url)
-            books_info.append(book_info)
-        except requests.HTTPError:
-            print('Unable to download book')
-        
-    with open('fantasy_books_info.json', mode="a") as file:
-        json.dump(books_info, file, ensure_ascii=False, indent=4)
-
-
-'''if __name__ == '__main__':
-    main()'''
-
-download_category()
+if __name__ == '__main__':
+    main()
