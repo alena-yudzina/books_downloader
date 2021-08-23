@@ -1,3 +1,6 @@
 .venv/
 books/
 images/
+.DS_Store
+__pycache__/
+fantasy_books_info.json

@@ -1,9 +1,11 @@
 from os import name
 import requests
+import json
 from pathlib import Path
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from urllib.parse import urlparse, urlsplit, urljoin, unquote
+from parse_tululu_category import fantasy_urls
 import argparse
 import datetime
 
@@ -29,9 +31,10 @@ def parse_book_page(page):
     book_info = {
         'title': title.strip(),
         'author': author.strip(),
-        'genre': genres,
         'img_url': img_url,
-        'comments': comments
+        'book_path': '',
+        'comments': comments,
+        'genres': genres,
     }
     return book_info
 
@@ -99,5 +102,38 @@ def main():
             print('Unable to download book')
 
 
-if __name__ == '__main__':
-    main()
+def download_category():
+    book_ids = fantasy_urls()
+    books_info = []
+    for book_id in book_ids:
+        url = 'https://tululu.org/b{}'.format(book_id)
+        response = requests.get(url)
+        try:
+            check_for_redirect(response)
+            response.raise_for_status()
+        except requests.HTTPError:
+            continue
+
+        book_info = parse_book_page(response.text)
+        img_url = urljoin(url, book_info['img_url'])
+        book_url = 'https://tululu.org/txt.php'
+        payload = {'id': book_id}
+        try:
+            book_info['book_path'] = str(download_txt(
+                book_url,
+                payload,
+                filename=book_info['title']
+            ))
+            download_image(img_url)
+            books_info.append(book_info)
+        except requests.HTTPError:
+            print('Unable to download book')
+        
+    with open('fantasy_books_info.json', mode="a") as file:
+        json.dump(books_info, file, ensure_ascii=False, indent=4)
+
+
+'''if __name__ == '__main__':
+    main()'''
+
+download_category()
