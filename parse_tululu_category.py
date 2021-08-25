@@ -51,7 +51,7 @@ def parse_cli_args():
     return args
 
 
-def fantasy_urls(start, end):
+def get_fantasy_ids(start, end):
     fantasy_book_ids = []
     for page_id in range(start, end):
         url = 'https://tululu.org/l55/{}'.format(page_id)
@@ -66,7 +66,7 @@ def fantasy_urls(start, end):
 
 def main():
     args = parse_cli_args()
-    book_ids = fantasy_urls(args.start_page, args.end_page)
+    book_ids = get_fantasy_ids(args.start_page, args.end_page)
     books_info = []
     for book_id in book_ids:
         url = 'https://tululu.org/b{}'.format(book_id)
