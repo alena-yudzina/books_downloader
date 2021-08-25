@@ -64,7 +64,7 @@ def fantasy_urls(start, end):
     return fantasy_book_ids
 
 
-def download_category():
+def main():
     args = parse_cli_args()
     book_ids = fantasy_urls(args.start_page, args.end_page)
     books_info = []
@@ -103,4 +103,5 @@ def download_category():
         json.dump(books_info, file, ensure_ascii=False, indent=4)
 
 
-download_category()
+if __name__ == '__main__':
+    main()
