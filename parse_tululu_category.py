@@ -10,6 +10,15 @@ from download import (check_for_redirect, download_image, download_txt,
                       parse_book_page)
 
 
+def get_last_page():
+    url = 'https://tululu.org/l55/1'
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'lxml')
+    last_page = soup.select('a.npage')[-1].text
+    return last_page
+
+
 def parse_cli_args():
     parser = argparse.ArgumentParser(description='Download fantasy books')
     parser.add_argument(
@@ -22,7 +31,7 @@ def parse_cli_args():
         '--end_page',
         help='set end page',
         type=int,
-        default=701
+        default=get_last_page()
     )
     parser.add_argument(
         '--dest_folder',
@@ -53,7 +62,7 @@ def parse_cli_args():
 
 def get_fantasy_ids(start, end):
     fantasy_book_ids = []
-    for page_id in range(start, end):
+    for page_id in range(start, end + 1):
         url = 'https://tululu.org/l55/{}'.format(page_id)
         response = requests.get(url)
         response.raise_for_status()
