@@ -1,8 +1,10 @@
 import json
-from more_itertools import chunked
+import os
 from pathlib import Path
+
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
+from more_itertools import chunked
 
 
 def on_reload():
@@ -27,4 +29,4 @@ def on_reload():
 on_reload()
 server = Server()
 server.watch('website/template.html', on_reload)
-server.serve(root='website')
+server.serve(root='website/')

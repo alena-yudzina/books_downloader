@@ -1,7 +1,7 @@
 import argparse
 import datetime
 from pathlib import Path
-from urllib.parse import unquote, urljoin, urlparse, urlsplit
+from urllib.parse import unquote, urlencode, urljoin, urlsplit
 
 import requests
 from bs4 import BeautifulSoup
