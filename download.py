@@ -29,6 +29,7 @@ def parse_book_page(page):
         'title': title.strip(),
         'author': author.strip(),
         'img_url': img_url,
+        'img_path': '',
         'book_path': '',
         'comments': comments,
         'genres': genres,
@@ -96,7 +97,7 @@ def main():
             download_image(img_url)
             download_txt(book_url, payload, filename=book_info['title'])
         except requests.HTTPError:
-            print('Unable to download book')
+            print('Unable to download a book')
 
 
 if __name__ == '__main__':
