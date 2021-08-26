@@ -1,5 +1,6 @@
 import json
 from more_itertools import chunked
+from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
 
@@ -14,14 +15,16 @@ def on_reload():
     with open("fantasy_books_info.json", "r") as file:
         books_info = file.read()
     books_info = json.loads(books_info)
-    books_rows = list(chunked(books_info, 2))
-
-    rendered_page = template.render(books_rows=books_rows)
-    with open('index.html', 'w', encoding="utf8") as file:
-        file.write(rendered_page)
+    books_pages = list(chunked(books_info, 10))
+    Path('website/pages').mkdir(parents=True, exist_ok=True)
+    for page, books in enumerate(books_pages, start=1):
+        books_rows = list(chunked(books, 2))
+        rendered_page = template.render(books_rows=books_rows)
+        with open('website/pages/index{}.html'.format(page), 'w', encoding="utf8") as file:
+            file.write(rendered_page)
 
 
 on_reload()
 server = Server()
 server.watch('website/template.html', on_reload)
-server.serve(root='.')
+server.serve(root='website')
