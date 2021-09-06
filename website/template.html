@@ -18,18 +18,37 @@
   <body>
 
     <nav aria-label="...">
-      <ul class="pagination ml">
-        <li class="page-item disabled">
-          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item active" aria-current="page">
-          <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#">Next</a>
-        </li>
+      <ul class="pagination justify-content-center">
+        {% if page_num > 1 %}
+          <li class="page-item">
+            <a class="page-link" href="/index{{ page_num-1 }}.html">Предыдущая</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Предыдущая</span>
+          </li>
+        {% endif %}
+
+        {% for page in range(pages_amount) %}
+          {% if page+1 == page_num %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ page+1 }}<span class="sr-only">(current)</span></a>
+          </li>
+          {% else %}
+          <li class="page-item"><a class="page-link" href="/index{{ page+1 }}.html">{{ page+1 }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+
+        {% if pages_amount > page_num %}
+          <li class="page-item">
+            <a class="page-link" href="/index{{ page_num+1 }}.html">Следующая</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Следующая</span>
+          </li>
+        {% endif %}
       </ul>
     </nav>
 

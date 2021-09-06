@@ -18,11 +18,13 @@ def on_reload():
         books_info = file.read()
     books_info = json.loads(books_info)
     books_pages = list(chunked(books_info, 10))
+    pages_amount = len(books_pages)
+    print(pages_amount)
     Path('website/pages').mkdir(parents=True, exist_ok=True)
-    for page, books in enumerate(books_pages, start=1):
+    for page_num, books in enumerate(books_pages, start=1):
         books_rows = list(chunked(books, 2))
-        rendered_page = template.render(books_rows=books_rows)
-        with open('website/pages/index{}.html'.format(page), 'w', encoding="utf8") as file:
+        rendered_page = template.render(books_rows=books_rows, pages_amount=pages_amount, page_num=page_num)
+        with open('website/pages/index{}.html'.format(page_num), 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
 
