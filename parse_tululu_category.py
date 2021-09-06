@@ -96,19 +96,19 @@ def main():
                     book_url,
                     payload,
                     filename=book_info['title'],
-                    folder=Path(args.dest_folder, 'books')
+                    folder=Path(args.dest_folder, 'books/')
                 ))
             if not args.skip_imgs:
                 book_info['img_path'] = str(download_image(
                     img_url,
-                    folder=Path(args.dest_folder, 'images')
+                    folder=Path(args.dest_folder, 'images/')
                 ))
             books_info.append(book_info)
         except requests.HTTPError:
             print('Unable to download a book')
     
     json_path =  args.json_path if args.json_path != '.' else args.dest_folder
-    with open(Path(json_path, 'fantasy_books_info.json'), mode="a") as file:
+    with open(Path(json_path, 'fantasy_books_info.json'), mode="w") as file:
         json.dump(books_info, file, ensure_ascii=False, indent=4)
 
 
