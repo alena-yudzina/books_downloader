@@ -29,4 +29,4 @@ def on_reload():
 on_reload()
 server = Server()
 server.watch('website/template.html', on_reload)
-server.serve(root='website/')
+server.serve(root='website/pages')
