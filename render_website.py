@@ -15,9 +15,8 @@ def on_reload():
     template = env.get_template('website/template.html')
 
     with open("fantasy_books_info.json", "r") as file:
-        books_info = file.read()
-    books_info = json.loads(books_info)
-    books_pages = list(chunked(books_info, 10))
+        books = json.load(file)
+    books_pages = list(chunked(books, 10))
     pages_amount = len(books_pages)
     print(pages_amount)
     Path('website/pages').mkdir(parents=True, exist_ok=True)
