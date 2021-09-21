@@ -16,10 +16,11 @@ def on_reload():
 
     with open("fantasy_books_info.json", "r") as file:
         books = json.load(file)
-    books_pages = list(chunked(books, 10))
+    books_per_page = 10
+    books_pages = list(chunked(books, books_per_page))
     pages_amount = len(books_pages)
-    print(pages_amount)
     Path('website/pages').mkdir(parents=True, exist_ok=True)
+
     for page_num, books in enumerate(books_pages, start=1):
         books_rows = list(chunked(books, 2))
         rendered_page = template.render(books_rows=books_rows, pages_amount=pages_amount, page_num=page_num)
