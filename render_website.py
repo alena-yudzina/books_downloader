@@ -12,23 +12,23 @@ def on_reload():
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
     )
-    template = env.get_template('website/template.html')
+    template = env.get_template('template.html')
 
     with open("fantasy_books_info.json", "r") as file:
         books = json.load(file)
     books_per_page = 10
     books_pages = list(chunked(books, books_per_page))
     pages_amount = len(books_pages)
-    Path('website/pages').mkdir(parents=True, exist_ok=True)
+    Path('pages').mkdir(parents=True, exist_ok=True)
 
     for page_num, books in enumerate(books_pages, start=1):
         books_rows = list(chunked(books, 2))
         rendered_page = template.render(books_rows=books_rows, pages_amount=pages_amount, page_num=page_num)
-        with open('website/pages/index{}.html'.format(page_num), 'w', encoding="utf8") as file:
+        with open('pages/index{}.html'.format(page_num), 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
 
 on_reload()
 server = Server()
-server.watch('website/template.html', on_reload)
-server.serve(root='website/pages')
+server.watch('template.html', on_reload)
+server.serve(root='.')

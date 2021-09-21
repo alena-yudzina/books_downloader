@@ -4,7 +4,7 @@
 
 ![Page 1](screenshots/screenshot.png)
 
-Пример можно посмотреть на [GitHub Pages](https://alena-yudzina.github.io/books_downloader/index1.html).
+Пример можно посмотреть на [GitHub Pages](https://alena-yudzina.github.io/books_downloader/pages/index1.html).
 
 ## Как установить
 

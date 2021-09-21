@@ -92,16 +92,16 @@ def main():
         payload = {'id': book_id}
         try:
             if not args.skip_txt:
-                book_info['book_path'] = str(download_txt(
+                book_info['book_path'] = '../{}'.format(download_txt(
                     book_url,
                     payload,
                     filename=book_info['title'],
-                    folder=Path(args.dest_folder, 'books/')
+                    folder=Path(args.dest_folder, 'media/books/')
                 ))
             if not args.skip_imgs:
-                book_info['img_path'] = str(download_image(
+                book_info['img_path'] = '../{}'.format(download_image(
                     img_url,
-                    folder=Path(args.dest_folder, 'images/')
+                    folder=Path(args.dest_folder, 'media/images/')
                 ))
             books_info.append(book_info)
         except requests.HTTPError:

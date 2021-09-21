@@ -47,12 +47,11 @@ def download_txt(url, payload, filename, folder='books/'):
     response = requests.get(url, params=payload)
     check_for_redirect(response)
     response.raise_for_status()
-    website_folder = Path('website/pages/')
-    (website_folder / folder).mkdir(parents=True, exist_ok=True)
+    Path(folder).mkdir(parents=True, exist_ok=True)
     timestamp = datetime.datetime.now().strftime('%y%m%d_%H%M%S')
     filename = '{}_{}.txt'.format(timestamp, sanitize_filename(filename))
     filepath = Path(folder) / filename
-    with open(website_folder / filepath, 'wb') as file:
+    with open(filepath, 'wb') as file:
         file.write(response.content)
 
     return filepath
@@ -63,15 +62,14 @@ def download_image(url, folder='images/'):
     response = requests.get(url)
     response.raise_for_status()
     check_for_redirect(response)
-    website_folder = Path('website/pages/')
-    (website_folder / folder).mkdir(parents=True, exist_ok=True)
+    Path(folder).mkdir(parents=True, exist_ok=True)
     url_path = urlsplit(url).path
     filename = unquote(Path(url_path).name)
     timestamp = datetime.datetime.now().strftime('%y%m%d_%H%M%S')
     filename = '{}_{}'.format(timestamp, sanitize_filename(filename))
     
     filepath = Path(folder) / filename
-    with open(website_folder / filepath, 'wb') as file:
+    with open(filepath, 'wb') as file:
         file.write(response.content)
 
     return filepath
